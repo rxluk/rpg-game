@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mindra - RPG</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0a0a0a;
+      color: #e0e0e0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #header {
+      background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+      padding: 10px 20px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 50px;
+    }
+
+    #header h1 {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #00d4ff;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+
+    #status-bar {
+      display: flex;
+      gap: clamp(10px, 2vw, 20px);
+      font-size: clamp(12px, 1.5vw, 14px);
+      color: #888;
+    }
+
+    #main-content {
+      flex: 1;
+      display: flex;
+      height: calc(100vh - 50px);
+      min-height: 0;
+    }
+
+    #game-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #0f0f0f;
+      min-width: 0;
+    }
+
+    #map-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
+      padding: 10px;
+      position: relative;
+      min-height: 0;
+    }
+
+    #mapa-img {
+      max-width: calc(100% - 20px);
+      max-height: calc(100% - 20px);
+      width: auto;
+      height: auto;
+      aspect-ratio: 1/1;
+      image-rendering: pixelated;
+      border: 2px solid #333;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+      filter: brightness(0.9);
+      object-fit: contain;
+    }
+
+    #narrative-panel {
+      height: clamp(150px, 25vh, 200px);
+      background-color: #0a0a0a;
+      border-top: 1px solid #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 150px;
+    }
+
+    #narrative-content {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      font-size: clamp(13px, 1.5vw, 15px);
+      line-height: 1.6;
+      min-height: 0;
+    }
+
+    #narrative-content p {
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    #narrative-content p:first-child {
+      color: #00d4ff;
+    }
+
+    #console-container {
+      background-color: #0f0f0f;
+      border-top: 1px solid #222;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #console-prompt {
+      color: #00d4ff;
+      font-family: 'Courier New', monospace;
+    }
+
+    #entrada {
+      flex: 1;
+      background-color: transparent;
+      border: none;
+      color: #e0e0e0;
+      font-size: clamp(14px, 1.5vw, 16px);
+      font-family: 'Courier New', monospace;
+      outline: none;
+    }
+
+    #side-panel {
+      width: clamp(250px, 25vw, 300px);
+      background-color: #0a0a0a;
+      border-left: 1px solid #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    #commands-section {
+      padding: 15px;
+      border-bottom: 1px solid #222;
+      overflow-y: auto;
+      max-height: 50%;
+    }
+
+    #commands-section h3 {
+      font-size: clamp(12px, 1.5vw, 14px);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .command-item {
+      padding: 6px 10px;
+      margin-bottom: 5px;
+      background-color: #111;
+      border: 1px solid #222;
+      border-radius: 4px;
+      font-size: clamp(11px, 1.3vw, 13px);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .command-item:hover {
+      background-color: #1a1a1a;
+      border-color: #00d4ff;
+      color: #00d4ff;
+      transform: translateX(5px);
+    }
+
+    .command-key {
+      color: #00d4ff;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+    }
+
+    #inventory-section {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    #inventory-section h3 {
+      font-size: clamp(12px, 1.5vw, 14px);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .inventory-item {
+      padding: 8px;
+      margin-bottom: 5px;
+      background-color: #0f0f0f;
+      border: 1px solid #222;
+      border-radius: 4px;
+      font-size: clamp(11px, 1.3vw, 13px);
+    }
+
+    @media (max-width: 768px) {
+      #side-panel {
+        display: none;
+      }
+      
+      #header {
+        padding: 8px 15px;
+      }
+      
+      #status-bar span:nth-child(2),
+      #status-bar span:nth-child(4) {
+        display: none;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #444;
+    }
+
+    .glow {
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8)); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header">
+    <h1>MINDRA</h1>
+    <div id="status-bar">
+      <span>Planet-0</span>
+      <span>|</span>
+      <span>Day 1</span>
+      <span>|</span>
+      <span>HP: 100</span>
+    </div>
+  </div>
+
+  <div id="main-content">
+    <div id="game-view">
+      <div id="map-container">
+        <img id="mapa-img" src="planet-0/map.png" alt="Mapa Planet-0">
+      </div>
+      
+      <div id="narrative-panel">
+        <div id="narrative-content">
+          <p>>>> Você desperta em um planeta isolado. À sua frente, uma casa solitária e um lago calmo. Sua nave está trancada. Seu gato o observa...</p>
+        </div>
+        
+        <div id="console-container">
+          <span id="console-prompt">></span>
+          <input type="text" id="entrada" placeholder="Digite um comando..." autofocus />
+        </div>
+      </div>
+    </div>
+
+    <div id="side-panel">
+      <div id="commands-section">
+        <h3>Comandos</h3>
+        <div class="command-item" data-command="/nave">
+          <span>Verificar nave</span>
+          <span class="command-key">/nave</span>
+        </div>
+        <div class="command-item" data-command="/casa">
+          <span>Explorar casa</span>
+          <span class="command-key">/casa</span>
+        </div>
+        <div class="command-item" data-command="/lago">
+          <span>Examinar lago</span>
+          <span class="command-key">/lago</span>
+        </div>
+        <div class="command-item" data-command="/gato">
+          <span>Interagir com gato</span>
+          <span class="command-key">/gato</span>
+        </div>
+        <div class="command-item" data-command="/olhar">
+          <span>Observar ao redor</span>
+          <span class="command-key">/olhar</span>
+        </div>
+      </div>
+
+      <div id="inventory-section">
+        <h3>Inventário</h3>
+        <div class="inventory-item">Comunicador (Sem sinal)</div>
+        <div class="inventory-item">Lanterna</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const entrada = document.getElementById("entrada");
+    const narrativeContent = document.getElementById("narrative-content");
+    const commandItems = document.querySelectorAll(".command-item");
+
+    commandItems.forEach(item => {
+      item.addEventListener("click", () => {
+        const command = item.getAttribute("data-command");
+        processCommand(command);
+      });
+    });
+
+    entrada.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        const comando = entrada.value.trim();
+        if (comando) {
+          processCommand(comando);
+        }
+      }
+    });
+
+    function processCommand(comando) {
+      addNarrative(`> ${comando}`, "#666");
+
+      let resposta = "";
+      switch(comando.toLowerCase()) {
+        case "/nave":
+          resposta = "A nave está trancada. O painel de controle pisca erraticamente. Você precisa encontrar uma forma de restaurar a energia.";
+          break;
+        case "/casa":
+          resposta = "A casa parece abandonada há décadas. A porta range ao ser empurrada. Dentro, móveis cobertos de poeira e um estranho brilho vindo do porão...";
+          break;
+        case "/lago":
+          resposta = "As águas do lago têm uma coloração púrpura incomum. Algo metálico brilha nas profundezas. Você sente uma presença observando.";
+          break;
+        case "/gato":
+          resposta = "O gato mia suavemente e seus olhos brilham com uma inteligência peculiar. Ele parece querer guiá-lo para algum lugar.";
+          break;
+        case "/olhar":
+          resposta = "O céu alienígena pulsa com cores impossíveis. Duas luas gêmeas pairam no horizonte. O ar tem um cheiro metálico e doce.";
+          break;
+        default:
+          resposta = "Comando não reconhecido. Use os comandos disponíveis no painel lateral.";
+      }
+
+      if (resposta) {
+        setTimeout(() => {
+          addNarrative(resposta, "#e0e0e0");
+        }, 300);
+      }
+
+      entrada.value = "";
+    }
+
+    function addNarrative(text, color = "#e0e0e0") {
+      const p = document.createElement("p");
+      p.style.color = color;
+      p.textContent = text;
+      narrativeContent.appendChild(p);
+      narrativeContent.scrollTop = narrativeContent.scrollHeight;
+    }
+
+    setTimeout(() => {
+      addNarrative("Sistema inicializado. Digite um comando ou clique nas opções disponíveis.", "#00d4ff");
+    }, 2000);
+  </script>
+
+</body>
+</html>

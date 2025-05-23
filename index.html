@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindra - Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #0f0f0f;
+      --bg-card: #111;
+      --border-color: #222;
+      --text-primary: #e0e0e0;
+      --text-secondary: #888;
+      --accent: #00d4ff;
+      --accent-hover: #00a8cc;
+      --error: #ff4444;
+      --success: #44ff44;
+    }
+
+    body.light-mode {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-card: #fafafa;
+      --border-color: #e0e0e0;
+      --text-primary: #333;
+      --text-secondary: #666;
+      --accent: #0099cc;
+      --accent-hover: #007799;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    #header {
+      background: linear-gradient(to bottom, #1a1a1a, var(--bg-primary));
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    body.light-mode #header {
+      background: linear-gradient(to bottom, #fff, var(--bg-primary));
+    }
+
+    #logo {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 300;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+      text-decoration: none;
+    }
+
+    #theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #main-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, var(--bg-primary) 100%);
+      padding: 20px;
+    }
+
+    body.light-mode #main-container {
+      background: radial-gradient(ellipse at center, #e8f4f8 0%, var(--bg-primary) 100%);
+    }
+
+    #login-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.5s ease;
+    }
+
+    body.light-mode #login-card {
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #login-card h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 300;
+      font-size: clamp(24px, 3vw, 28px);
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 16px;
+      transition: all 0.3s ease;
+      font-family: 'Courier New', monospace;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    }
+
+    .form-group input::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .form-links {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .form-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .form-links a:hover {
+      color: var(--accent);
+    }
+
+    #form-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--accent);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      animation: slideTab 0.3s ease;
+    }
+
+    @keyframes slideTab {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    .form-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.error {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid var(--error);
+      color: var(--error);
+    }
+
+    .message.success {
+      background: rgba(68, 255, 68, 0.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .loading {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      #login-card {
+        padding: 30px 20px;
+      }
+      
+      #header {
+        padding: 15px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header">
+    <a href="#" id="logo">MINDRA</a>
+    <button id="theme-toggle">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-text">Escuro</span>
+    </button>
+  </div>
+
+  <div id="main-container">
+    <div id="login-card">
+      <div id="form-tabs">
+        <button class="tab active" data-tab="login">Login</button>
+        <button class="tab" data-tab="register">Cadastrar</button>
+      </div>
+
+      <div class="message error" id="error-message"></div>
+      <div class="message success" id="success-message"></div>
+
+      <!-- Login Form -->
+      <div class="form-section active" id="login-section">
+        <h2>Entrar no Jogo</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Senha</label>
+            <input type="password" id="login-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+          <div class="loading"></div>
+        </form>
+        <div class="form-links">
+          <a href="#" id="forgot-link">Esqueceu sua senha?</a>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div class="form-section" id="register-section">
+        <h2>Criar Conta</h2>
+        <form id="register-form">
+          <div class="form-group">
+            <label for="register-name">Nome de Usuário</label>
+            <input type="text" id="register-name" placeholder="Explorador" required>
+          </div>
+          <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="register-password">Senha</label>
+            <input type="password" id="register-password" placeholder="••••••••" required>
+          </div>
+          <div class="form-group">
+            <label for="register-confirm">Confirmar Senha</label>
+            <input type="password" id="register-confirm" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Criar Conta</button>
+          <div class="loading"></div>
+        </form>
+      </div>
+
+      <!-- Forgot Password Form -->
+      <div class="form-section" id="forgot-section">
+        <h2>Recuperar Senha</h2>
+        <form id="forgot-form">
+          <div class="form-group">
+            <label for="forgot-email">Email</label>
+            <input type="email" id="forgot-email" placeholder="seu@email.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Enviar Link</button>
+          <button type="button" class="btn btn-secondary" id="back-to-login">Voltar ao Login</button>
+          <div class="loading"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    const body = document.body;
+
+    const savedTheme = localStorage.getItem('mindra-theme') || 'dark';
+    if (savedTheme === 'light') {
+      body.classList.add('light-mode');
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'Claro';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('light-mode');
+      const isLight = body.classList.contains('light-mode');
+      
+      themeIcon.textContent = isLight ? '☀️' : '🌙';
+      themeText.textContent = isLight ? 'Claro' : 'Escuro';
+      
+      localStorage.setItem('mindra-theme', isLight ? 'light' : 'dark');
+    });
+
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.form-section');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.dataset.tab;
+        
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        sections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === `${targetTab}-section`) {
+            section.classList.add('active');
+          }
+        });
+        
+        clearMessages();
+      });
+    });
+
+    document.getElementById('forgot-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      document.getElementById('form-tabs').style.display = 'none';
+      
+      sections.forEach(section => section.classList.remove('active'));
+      document.getElementById('forgot-section').classList.add('active');
+      
+      clearMessages();
+    });
+
+    document.getElementById('back-to-login').addEventListener('click', () => {
+      document.getElementById('form-tabs').style.display = 'flex';
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      tabs[0].classList.add('active');
+      
+      sections.forEach(section => section.classList.remove('active'));
+      document.getElementById('login-section').classList.add('active');
+      
+      clearMessages();
+    });
+
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    document.getElementById('register-form').addEventListener('submit', handleRegister);
+    document.getElementById('forgot-form').addEventListener('submit', handleForgot);
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      showLoading('login-form');
+      
+      setTimeout(() => {
+        hideLoading('login-form');
+        showSuccess('Login realizado com sucesso! Redirecionando...');
+        
+        setTimeout(() => {
+          window.location.href = '#game';
+        }, 2000);
+      }, 1500);
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const confirm = document.getElementById('register-confirm').value;
+      
+      if (password !== confirm) {
+        showError('As senhas não coincidem!');
+        return;
+      }
+      
+      if (password.length < 8) {
+        showError('A senha deve ter pelo menos 8 caracteres!');
+        return;
+      }
+      
+      showLoading('register-form');
+      
+      setTimeout(() => {
+        hideLoading('register-form');
+        showSuccess('Conta criada com sucesso! Faça login para continuar.');
+        
+        setTimeout(() => {
+          tabs[0].click();
+        }, 2000);
+      }, 1500);
+    }
+
+    function handleForgot(e) {
+      e.preventDefault();
+      const email = document.getElementById('forgot-email').value;
+      
+      showLoading('forgot-form');
+      
+      setTimeout(() => {
+        hideLoading('forgot-form');
+        showSuccess('Link de recuperação enviado para ' + email);
+      }, 1500);
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+      
+      setTimeout(() => {
+        errorEl.style.display = 'none';
+      }, 5000);
+    }
+
+    function showSuccess(message) {
+      const successEl = document.getElementById('success-message');
+      successEl.textContent = message;
+      successEl.style.display = 'block';
+      
+      setTimeout(() => {
+        successEl.style.display = 'none';
+      }, 5000);
+    }
+
+    function clearMessages() {
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+    }
+
+    function showLoading(formId) {
+      const form = document.getElementById(formId);
+      form.querySelector('.btn-primary').style.display = 'none';
+      form.querySelector('.loading').style.display = 'block';
+    }
+
+    function hideLoading(formId) {
+      const form = document.getElementById(formId);
+      form.querySelector('.btn-primary').style.display = 'block';
+      form.querySelector('.loading').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
